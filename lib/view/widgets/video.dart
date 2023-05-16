@@ -1,21 +1,24 @@
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 
+import 'mute_icon.dart';
+import 'unmute_icon.dart';
+
 bool isMuted = true;
 
-class FeedItem extends StatefulWidget {
-  //Url to play video
+class Video extends StatefulWidget {
   final String url;
-  const FeedItem({Key? key, required this.url}) : super(key: key);
+  const Video({Key? key, required this.url}) : super(key: key);
 
   @override
-  State<FeedItem> createState() => _FeedItemState();
+  State<Video> createState() => _VideoState();
 }
 
-class _FeedItemState extends State<FeedItem> {
-  //player controller
+class _VideoState extends State<Video> {
   VideoPlayerController? _controller;
 
   bool isShowMute = false;
@@ -24,14 +27,15 @@ class _FeedItemState extends State<FeedItem> {
 
   Logger logger = Logger();
 
+  final FlareControls flareControls = FlareControls();
+  bool isLiked = false;
+
   @override
   void initState() {
     super.initState();
-    //initialize player
     initializePlayer(widget.url);
   }
 
-//Initialize Video Player
   void initializePlayer(String url) async {
     final fileInfo = await checkCacheFor(url);
     if (fileInfo == null) {
@@ -57,17 +61,13 @@ class _FeedItemState extends State<FeedItem> {
     }
   }
 
-//: check for cache
   Future<FileInfo?> checkCacheFor(String url) async {
     final FileInfo? value = await DefaultCacheManager().getFileFromCache(url);
     return value;
   }
 
-//:cached Url Data
   void cachedForUrl(String url) async {
-    await DefaultCacheManager().getSingleFile(url).then((value) {
-      print('downloaded successfully done for $url');
-    });
+    await DefaultCacheManager().getSingleFile(url).then((value) {});
   }
 
 //:Dispose
@@ -92,6 +92,11 @@ class _FeedItemState extends State<FeedItem> {
             ? Stack(
                 children: [
                   GestureDetector(
+                      onDoubleTap: () => setState(() {
+                            isLiked = !isLiked;
+                            flareControls.play("like");
+                            logger.w("message");
+                          }),
                       onLongPressStart: (details) => pause(),
                       onLongPressEnd: (details) => play(),
                       onTap: () async => showMute(),
@@ -101,7 +106,23 @@ class _FeedItemState extends State<FeedItem> {
                           ? isMuted
                               ? const MutedIcon()
                               : const UnMutedIcon()
-                          : const SizedBox())
+                          : const SizedBox()),
+                  Center(
+                    child: Container(
+                        width: double.infinity,
+                        height: 250,
+                        child: Center(
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: FlareActor(
+                              'assets/instagram_like.flr',
+                              controller: flareControls,
+                              animation: 'idle',
+                            ),
+                          ),
+                        )),
+                  ),
                 ],
               )
             : const Column(
@@ -140,39 +161,5 @@ class _FeedItemState extends State<FeedItem> {
     await Future.delayed(const Duration(seconds: 1));
     isShowMute = !isShowMute;
     setState(() {});
-  }
-}
-
-class MutedIcon extends StatelessWidget {
-  const MutedIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      radius: 32,
-      backgroundColor: Colors.black26,
-      child: Icon(
-        Icons.volume_off,
-        size: 32,
-        color: Colors.white,
-      ),
-    );
-  }
-}
-
-class UnMutedIcon extends StatelessWidget {
-  const UnMutedIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      radius: 32,
-      backgroundColor: Colors.black26,
-      child: Icon(
-        Icons.volume_up,
-        size: 32,
-        color: Colors.white,
-      ),
-    );
   }
 }

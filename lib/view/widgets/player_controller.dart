@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reels_clone/feed_item.dart';
+import 'package:reels_clone/view/widgets/video.dart';
 
 class PlayerController extends StatefulWidget {
   const PlayerController({Key? key}) : super(key: key);
@@ -37,7 +37,7 @@ class _PlayerControllerState extends State<PlayerController> {
           });
         },
         itemBuilder: (ctx, index) {
-          return FeedItem(url: urls[index]);
+          return Video(url: urls[index]);
         },
       ),
     );
