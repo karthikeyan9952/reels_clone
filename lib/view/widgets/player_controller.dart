@@ -15,7 +15,7 @@ class _PlayerControllerState extends State<PlayerController> {
 
   //static content
   final List<String> urls = const [
-    "https://mukthi.life/admin/public/attachment/YbmnMFc57Y.mp4",
+    // "https://mukthi.life/admin/public/attachment/YbmnMFc57Y.mp4",
     "https://mukthi.life/admin/public/attachment/mmo5uFGiMF.mp4",
     "https://mukthi.life/admin/public/attachment/KAIAzgA1bU.mp4",
     "https://mukthi.life/admin/public/attachment/NsRvftLNQo.mp4",

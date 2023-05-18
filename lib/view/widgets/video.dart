@@ -8,7 +8,7 @@ import 'package:video_player/video_player.dart';
 import 'mute_icon.dart';
 import 'unmute_icon.dart';
 
-bool isMuted = true;
+bool isMuted = false;
 
 class Video extends StatefulWidget {
   final String url;
@@ -119,6 +119,7 @@ class _VideoState extends State<Video> {
                               'assets/instagram_like.flr',
                               controller: flareControls,
                               animation: 'idle',
+                              color: Colors.white,
                             ),
                           ),
                         )),
